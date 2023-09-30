@@ -44,6 +44,7 @@ const equalButton = document.getElementById("equal");
 const display = document.getElementById("display");
 const clearButton = document.getElementById("clear");
 const periodButton = document.getElementById("period");
+const backspaceButton = document.getElementById("backspace");
 
 disableButtons();
 const currentOperation = []; // Array for storing the operation
@@ -137,4 +138,10 @@ periodButton.addEventListener('click', () => {
     periodButton.disabled = true;
     display.textContent = display.textContent + '.';
     concatedNum = concatedNum + '.'
+})
+
+backspaceButton.addEventListener('click', ()=>{
+    concatedNum = ''
+    display.textContent = '';
+
 })
