@@ -7,15 +7,23 @@ body {
 }
 
 .calculator {
-  width: 300px;
+  width: 320px;
   height: 400px;
+  min-height: 490px;
+  border: solid 1px #3A4655;
+  box-shadow: 0 8px 50px -7px black;
 }
 
 #display {
   width: 100%;
-  height: 30px;
+  height: 100px;
   border: 1px solid grey;
   margin-bottom: 10px;
+  display:flex;
+  justify-content: flex-end;
+  font-size: 30px;
+  background: #3A4655;
+  color: white;
 }
 
 .row {
@@ -23,9 +31,12 @@ body {
   display: flex;
   gap: 5px;
   margin-bottom: 5px;
+  margin-left: 10px;
 }
 
 .button {
   width: 70px;
   height: 70px;
 }
+
+
