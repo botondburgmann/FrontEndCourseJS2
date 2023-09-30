@@ -44,64 +44,64 @@ const operation = [];
 
 for (const number of numbers) {
     number.addEventListener("click", () => {
-        if (display.textContent === '' || operation[operation.length-1] === '+' || operation[operation.length-1] === '-' || operation[operation.length-1] === '*' || operation[operation.length-1] === '/' ) {
+        
+        if (display.textContent !== '' && (operation[operation.length-1] === '+' || operation[operation.length-1] === '-'  || operation[operation.length-1] === '*' || operation[operation.length-1] === '/')) {
             display.textContent = '';
         }
+        else{
+            operation.pop();
+        }
         display.textContent += number.innerText
-
-
-
+        operation.push(Number(display.textContent))
+        console.log(operation);
     });
 
 }
 
 for (const operator of operators) {
     operator.addEventListener('click', () => {
-try {
-            if (display.textContent !== '') {
-                operation.push(Number(display.textContent));
-            }
+        try {
+            periodButton.disabled = false;
             if (operation.length === 3) {
-                const result = operate(operation[0], operation[1], operation[2]);
-                display.textContent = result;
+                const result = operate(operation[0], operation[1], operation[2])
                 operation.splice(0,3,result);
+                display.textContent = result;
             }
-
-            operation.push(operator.innerText);
+            operation.push(operator.innerText)
         } catch (error) {
-            alert(error.message)
-            operation.pop();
+            display.textContent = '';
+            alert(error.message);
         }
+
     });
 }
 
 
 equalButton.addEventListener('click', () =>{
-    console.log(operation);
-    try {
-        if (display.textContent !== '') {
-            operation.push(Number(display.textContent));
-            display.textContent = '';
-        }
-        if (operation.length === 3) {
-            const result = operate(operation[0], operation[1], operation[2]);
-            display.textContent = result;
-            operation.splice(0,3);
-        }
-        else{
-            throw new Error("Error: not enough numbers")
-        }
-    } catch (error) {
-        alert(error.message);
-        operation.splice(0,2);
-        
+    if (operation.length !== 3) {
+        alert("Error: Not enough numbers to make the calculation");
     }
+    else{
+        try {
+            const result = operate(operation[0], operation[1], operation[2])
+            operation.splice(0,3,result);
+            display.textContent = result; 
+        } catch (error) {
+            alert(error.message);
+            display.textContent = '';
+            periodButton.disabled = true;
+        }
+    }
+    console.log(operation);
+
 })
 
 
 clearButton.addEventListener('click', () =>{
     operation.splice(0,3);
     display.textContent = '';
+    periodButton.disabled = false;
+
 })
 
 periodButton.addEventListener('click', () => {
@@ -110,18 +110,75 @@ periodButton.addEventListener('click', () => {
     }
     else{
         display.textContent += '.';
+        periodButton.disabled = true;
     }
 })
 
 backspaceButton.addEventListener('click', ()=>{
     display.textContent = '';
+    periodButton.disabled = false;
+
 })
 
 negativeButton.addEventListener('click', () =>{
-    if (operation.length === 0) {
-        display.textContent = '-'
+    if(display.textContent === ''){
+        display.textContent = '-';
     }
     else{
         display.textContent *= -1;
+        operation.pop();
+        operation.push(Number(display.textContent))
     }
 })
+
+document.addEventListener("keydown", (event) => {
+    const key = event.key;
+    if (!isNaN(key) || key === ".") {
+        if (display.textContent !== '' && (operation[operation.length - 1] === '+' || operation[operation.length - 1] === '-' || operation[operation.length - 1] === '*' || operation[operation.length - 1] === '/')) {
+            display.textContent = '';
+        } else {
+            operation.pop();
+        }
+        display.textContent += key;
+        operation.push(Number(display.textContent));
+        console.log(operation);
+    }
+
+    if (key === "+" || key === "-" || key === "*" || key === "/") {
+        try {
+            periodButton.disabled = false;
+            if (operation.length === 3) {
+                const result = operate(operation[0], operation[1], operation[2]);
+                operation.splice(0, 3, result);
+                display.textContent = result;
+            }
+            operation.push(key);
+        } catch (error) {
+            display.textContent = '';
+            alert(error.message);
+        }
+    }
+
+    if (key === "Enter") {
+        if (operation.length !== 3) {
+            alert("Error: Not enough numbers to make the calculation");
+        } else {
+            try {
+                const result = operate(operation[0], operation[1], operation[2]);
+                operation.splice(0, 3, result);
+                display.textContent = result;
+            } catch (error) {
+                alert(error.message);
+                display.textContent = '';
+                periodButton.disabled = true;
+            }
+        }
+        console.log(operation);
+    }
+
+    if (key === "Backspace") {
+        display.textContent = '';
+        periodButton.disabled = false;
+    }
+
+});
