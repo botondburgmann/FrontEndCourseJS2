@@ -1,43 +1,34 @@
 
-function add(numOne, numTWo) {
-    return Math.round(numOne + numTWo);
+function add(numOne, numTwo) {
+    return Math.round((numOne + numTwo) * 100)/100;
 }
-function subtract(numOne, numTWo) {
-    return Math.round(numOne - numTWo);
+function subtract(numOne, numTwo) {
+    return Math.round((numOne - numTwo) * 100)/100;
 }
-function multiply(numOne, numTWo) {
-    return Math.round(numOne  * numTWo);
+function multiply(numOne, numTwo) {
+    return Math.round((numOne  * numTwo) * 100)/100;
 }
-function divide(numOne, numTWo) {
-    if (numTWo === 0) {
+function divide(numOne, numTwo) {
+    if (numTwo === 0) {
         throw new Error("Error: trying to divide by 0");
     }
-    return Math.round(numOne / numTWo);
+    return Math.round((numOne / numTwo * 100))/100;
 }
 
-function operate(numOne, operator, numTWo) {
+function operate(numOne, operator, numTwo) {
     switch (operator) {
         case '+':
-            return add(numOne, numTWo)
+            return add(numOne, numTwo)
         case '-':
-            return subtract(numOne, numTWo)
+            return subtract(numOne, numTwo)
         case '*':
-            return multiply(numOne, numTWo)
+            return multiply(numOne, numTwo)
         case '/':
-            return divide(numOne, numTWo)
+            return divide(numOne, numTwo)
         default:
             throw new Error("Error: operator doesn't exist");
     }
 }
-
-//Function for disabling operator and = buttons.
-function disableButtons() {
-    for (const operator of operators)
-        operator.disabled = true;
-    equalButton.disabled = true;
-}
-
-
 const numbers = document.getElementsByClassName("number"); 
 const operators = document.getElementsByClassName("operator");
 const equalButton = document.getElementById("equal");
@@ -47,104 +38,90 @@ const periodButton = document.getElementById("period");
 const backspaceButton = document.getElementById("backspace");
 const negativeButton = document.getElementById("negative")
 
-disableButtons();
-const currentOperation = []; // Array for storing the operation
-let concatedNum = '' // 
+
+const operation = [];
 
 
 for (const number of numbers) {
     number.addEventListener("click", () => {
-        if (periodButton.disabled) {
-            if (concatedNum === '') {
-                concatedNum = '0'
-            }
-            concatedNum = concatedNum.concat(number.innerText) // While the user pressing numbers it gets concatenated (e.g. 1, 12, 123)
+        if (display.textContent === '' || operation[operation.length-1] === '+' || operation[operation.length-1] === '-' || operation[operation.length-1] === '*' || operation[operation.length-1] === '/' ) {
+            display.textContent = '';
         }
-        else{
-            concatedNum = concatedNum.concat(number.innerText) // While the user pressing numbers it gets concatenated (e.g. 1, 12, 123)
-        }
-        console.log(concatedNum);
-        currentOperation.push(concatedNum) // Push the concatenated number (as string into the array)
-        display.textContent = concatedNum;
-        // If the array of operations has 3 elements, one of which is an operator, enable the = button
-        if(currentOperation.length === 3 && (currentOperation.includes('+') || currentOperation.includes('-') || currentOperation.includes('*') || currentOperation.includes('/'))) // If the array for the operation has 3 
-            equalButton.disabled = false;
-        
-        // Enable the operator buttons
-        for (const operator of operators)
-            operator.disabled = false   
+        display.textContent += number.innerText
+
+
+
     });
 
 }
 
 for (const operator of operators) {
     operator.addEventListener('click', () => {
+try {
+            if (display.textContent !== '') {
+                operation.push(Number(display.textContent));
+            }
+            if (operation.length === 3) {
+                const result = operate(operation[0], operation[1], operation[2]);
+                display.textContent = result;
+                operation.splice(0,3,result);
+            }
 
-    // Disable operator and = buttons until the user presses a number again
-    disableButtons();
-
-    //Enable the period button
-    periodButton.disabled = false;
-
-    /*  If the array of operations has 3 at elements, one of which is an operator, 
-        evaluate the first pair of numbers and store the result as the first element of the array 
-    */
-    if ((currentOperation.includes('+') || currentOperation.includes('-') || currentOperation.includes('*') || currentOperation.includes('/')) && currentOperation.length >= 3){
-        try {
-            currentOperation.splice(2,(currentOperation.length-2), Number(currentOperation[currentOperation.length-1]) )
-            const result = operate(currentOperation[0], currentOperation[1], currentOperation[2]);
-            display.textContent = result;
-            currentOperation.splice(0,currentOperation.length, result)
+            operation.push(operator.innerText);
         } catch (error) {
             alert(error.message)
+            operation.pop();
         }
-    }
-
-    // Otherwise it deletes all the elements so far, and replaces it with the last element after converting (So, e.g.: ['1', '12', '123'] will be [123])
-    else
-        currentOperation.splice(0,currentOperation.length, Number(currentOperation[currentOperation.length-1]) );
-
-    // Then append the operator to the end and reset the variable for concatenating the numbers
-    currentOperation.push(operator.innerText);
-    concatedNum = '';
-
-
     });
 }
 
 
-// When clicking on the = button, do the calculation, and reset everything
 equalButton.addEventListener('click', () =>{
+    console.log(operation);
     try {
-        currentOperation.splice(2,(currentOperation.length-2), Number(currentOperation[currentOperation.length-1]) )
-        const result = operate(currentOperation[0], currentOperation[1], currentOperation[2]);
-        display.textContent = result;
+        if (display.textContent !== '') {
+            operation.push(Number(display.textContent));
+            display.textContent = '';
+        }
+        if (operation.length === 3) {
+            const result = operate(operation[0], operation[1], operation[2]);
+            display.textContent = result;
+            operation.splice(0,3);
+        }
+        else{
+            throw new Error("Error: not enough numbers")
+        }
     } catch (error) {
-        alert(error.message)
+        alert(error.message);
+        operation.splice(0,2);
+        
     }
-
 })
 
 
 clearButton.addEventListener('click', () =>{
-    currentOperation.splice(0,currentOperation.length)
-    concatedNum = '';
+    operation.splice(0,3);
     display.textContent = '';
-
 })
 
 periodButton.addEventListener('click', () => {
-    periodButton.disabled = true;
-    display.textContent = display.textContent + '.';
-    concatedNum = concatedNum + '.'
+    if (display.textContent.includes('.')) {
+        alert("Error: Invalid format");
+    }
+    else{
+        display.textContent += '.';
+    }
 })
 
 backspaceButton.addEventListener('click', ()=>{
-    concatedNum = ''
     display.textContent = '';
-
 })
 
 negativeButton.addEventListener('click', () =>{
-
+    if (operation.length === 0) {
+        display.textContent = '-'
+    }
+    else{
+        display.textContent *= -1;
+    }
 })
