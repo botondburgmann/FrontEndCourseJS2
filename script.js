@@ -37,7 +37,7 @@ const clearButton = document.getElementById("clear");
 const periodButton = document.getElementById("period");
 const backspaceButton = document.getElementById("backspace");
 const negativeButton = document.getElementById("negative")
-
+let periodCount = 0;
 
 const operation = [];
 
@@ -157,6 +157,15 @@ document.addEventListener("keydown", (event) => {
         } catch (error) {
             display.textContent = '';
             alert(error.message);
+        }
+    }
+
+    if (key === "."){
+        periodCount++;  
+        if(periodCount>1){
+            alert("Error: Invalid input");
+            display.textContent = '';
+            operation.splice(0, 3);
         }
     }
 
