@@ -53,7 +53,6 @@ for (const number of numbers) {
         }
         display.textContent += number.innerText
         operation.push(Number(display.textContent))
-        console.log(operation);
     });
 
 }
@@ -92,7 +91,6 @@ equalButton.addEventListener('click', () =>{
             periodButton.disabled = true;
         }
     }
-    console.log(operation);
 
 })
 
@@ -141,7 +139,6 @@ document.addEventListener("keydown", (event) => {
         }
         display.textContent += key;
         operation.push(Number(display.textContent));
-        console.log(operation);
     }
 
     if (key === "+" || key === "-" || key === "*" || key === "/") {
@@ -173,7 +170,7 @@ document.addEventListener("keydown", (event) => {
                 periodButton.disabled = true;
             }
         }
-        console.log(operation);
+        
     }
 
     if (key === "Backspace") {
