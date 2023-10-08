@@ -60,6 +60,8 @@ for (const number of numbers) {
 for (const operator of operators) {
     operator.addEventListener('click', () => {
         try {
+            if (operation.length <1)
+            throw new Error("Error: Please give me a number first")
             periodButton.disabled = false;
             if (operation.length === 3) {
                 const result = operate(operation[0], operation[1], operation[2])
@@ -143,6 +145,8 @@ document.addEventListener("keydown", (event) => {
 
     if (key === "+" || key === "-" || key === "*" || key === "/") {
         try {
+            if (operation.length <1)
+                throw new Error("Error: Please give me a number first")
             periodButton.disabled = false;
             if (operation.length === 3) {
                 const result = operate(operation[0], operation[1], operation[2]);
